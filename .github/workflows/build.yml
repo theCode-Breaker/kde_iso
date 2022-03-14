@@ -25,14 +25,14 @@ jobs:
 
       - name: Update packages and install archiso
         run: pacman -Syu --noconfirm archiso mkinitcpio-archiso git squashfs-tools
-        
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Axyl ${{ env.DATE }}
-          path: out/*
 
       - name: Build ISO
         run: bash build.sh
+        
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Xero-KDE ${{ env.DATE }}
+          path: out/*
         
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
