@@ -38,5 +38,5 @@ jobs:
       - name: Upload iso to sourceforge
         run: |
           rsync --delete -vaP --stats \
-              -e ssh /tmp/$DATE ${{ secrets.SF_USER_NAME }}@frs.sourceforge.net:/home/frs/project/manjarolinux/${{ env.edition }}/${{ env.version }}
+              -e ssh /tmp/$DATE thecode-breaker@frs.sourceforge.net:/home/frs/project/xerolinux-iso-actions/kde-iso
               
