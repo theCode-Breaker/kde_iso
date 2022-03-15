@@ -44,21 +44,15 @@ jobs:
         run: bash build.sh
         
       - name: upload-sourceforge
-        shell: bash -O extglob {0}
+        shell: bash
         env:
+          sf-project: xerolinux-iso-actions
+          sf-user: ${{ secrets.SF_USER_NAME }}
+          sf-key: ${{ secrets.SF_PRIV_SSHKEY }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-         # if is not yet supported in composite https://github.com/actions/runner/blob/main/docs/adrs/0549-composite-run-steps.md#if-condition
-         if [ -z "${{ inputs.sf-project }}" ] || [ -z "${{ inputs.sf-user }}" ] || [ -z "${{ inputs.sf-key }}" ]; then 
-           echo "## not (all) credentials given for sourceforge upload"
-           exit 0
-         fi
-         echo "## sourceforge upload"
-        
-         ssh-keyscan -t rsa frs.sourceforge.net >> /home/runner/.ssh/known_hosts
-         echo "${{ inputs.sf-key }}" >> /home/runner/.ssh/github_actions
-         ssh-add /home/runner/.ssh/github_actions
+        run: |        
+         ssh-keyscan -t rsa frs.sourceforge.net >> /tmp/runner/.ssh/known_hosts
+         echo "${{ inputs.sf-key }}" >> /tmp/runner/.ssh/github_actions
+         ssh-add /tmp/runner/.ssh/github_actions
          ## upload
-         rsync -vaP --stats -e ssh ${{ steps.upload-prepare.outputs.upload-files }} \
-          ${{ inputs.sf-user }}@frs.sourceforge.net:/home/frs/project/${{ inputs.sf-project }}/kde-iso
-              
+         rsync -vaP --stats -e ssh /tmp/$DATE \ ${{ inputs.sf-user }}@frs.sourceforge.net:/home/frs/project/${{ inputs.sf-project }}/kde-iso
