@@ -33,6 +33,15 @@ jobs:
       - name: Build ISO
         run: bash build.sh
         
+      - id: upload-prepare
+        shell: bash
+        run: |
+         echo "## ssh setup"
+         mkdir -p /home/runner/.ssh
+         touch /home/runner/.ssh/github_actions
+         chmod 600 /home/runner/.ssh/github_actions
+         ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+        
       - name: upload-sourceforge
         shell: bash
         env:
@@ -41,8 +50,8 @@ jobs:
           sf-key: ${{ secrets.SF_PRIV_SSHKEY }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |        
-         ssh-keyscan -t rsa frs.sourceforge.net >> /tmp/runner/.ssh/known_hosts
-         echo "${{ inputs.sf-key }}" >> /tmp/runner/.ssh/github_actions
-         ssh-add /tmp/runner/.ssh/github_actions
-         ## upload
-         rsync -vaP --stats -e ssh /tmp/$DATE \ ${{ inputs.sf-user }}@frs.sourceforge.net:/home/frs/project/${{ inputs.sf-project }}/kde-iso
+          ssh-keyscan -t rsa frs.sourceforge.net >> /home/runner/.ssh/known_hosts
+          echo "${{ inputs.sf-key }}" >> /home/runner/.ssh/github_actions
+          ssh-add /home/runner/.ssh/github_actions
+          ## upload
+          rsync -vaP --stats -e ssh /tmp/$DATE \ ${{ inputs.sf-user }}@frs.sourceforge.net:/home/frs/project/${{ inputs.sf-project }}/kde-iso
