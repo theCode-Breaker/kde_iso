@@ -2,17 +2,7 @@ name: Build Xero KDE ISO
 
 on:
   workflow_dispatch:
-inputs:
-  sf-project: xerolinux-iso-actions
-    description: 'sf upload credentials'
-    required: true
-  sf-user: ${{ secrets.SF_USER_NAME }}
-    description: 'sf upload credentials'
-    required: true
-  sf-key: ${{ secrets.SF_PRIV_SSHKEY }
-    description: 'sf upload credentials'
-    required: true
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
