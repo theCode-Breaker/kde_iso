@@ -1,10 +1,18 @@
 name: Build Xero KDE ISO
 
 on:
-  schedule:
-    - cron: "0 0 * * 6"
   workflow_dispatch:
-
+inputs:
+  sf-project: xerolinux-iso-actions
+    description: 'sf upload credentials'
+    required: true
+  sf-user: ${{ secrets.SF_USER_NAME }}
+    description: 'sf upload credentials'
+    required: true
+  sf-key: ${{ secrets.SF_PRIV_SSHKEY }
+    description: 'sf upload credentials'
+    required: true
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,4 +45,23 @@ jobs:
         
       - name: Upload iso to sourceforge
         run: bash upload.sh
+        
+      - name: upload-sourceforge
+        shell: bash -O extglob {0}
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+         # if is not yet supported in composite https://github.com/actions/runner/blob/main/docs/adrs/0549-composite-run-steps.md#if-condition
+         if [ -z "${{ inputs.sf-project }}" ] || [ -z "${{ inputs.sf-user }}" ] || [ -z "${{ inputs.sf-key }}" ]; then 
+           echo "## not (all) credentials given for sourceforge upload"
+           exit 0
+         fi
+         echo "## sourceforge upload"
+        
+         ssh-keyscan -t rsa frs.sourceforge.net >> /home/runner/.ssh/known_hosts
+         echo "${{ inputs.sf-key }}" >> /home/runner/.ssh/github_actions
+         ssh-add /home/runner/.ssh/github_actions
+         ## upload
+         rsync -vaP --stats -e ssh ${{ steps.upload-prepare.outputs.upload-files }} \
+          ${{ inputs.sf-user }}@frs.sourceforge.net:/home/frs/project/${{ inputs.sf-project }}/kde-iso
               
