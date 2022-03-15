@@ -22,25 +22,21 @@ jobs:
 
       - name: Set current date as environment variable
         run: echo "DATE=`date +'%Y.%m.%d'`" >>$GITHUB_ENV
-
+        
+      - name: Create temporary build directory
+        run: mkdir -p /tmp/$DATE/airootfs/root/
+        
       - name: Update packages and install archiso
         run: pacman -Syu --noconfirm archiso mkinitcpio-archiso git squashfs-tools
 
+      - name: Copy profile to build directory
+        run: cp -r ./archiso /tmp/$DATE
+        
       - name: Build ISO
         run: bash build.sh
         
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Xero-KDE ${{ env.DATE }}
-          path: out/*
-        
-      - name: Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ env.DATE }}
-          prerelease: false
-          title: "Xero-KDE"
-          files: |
-            out/*
-            
+      - name: Upload iso to sourceforge
+        run: |
+          rsync --delete -vaP --stats \
+              -e ssh /tmp/$DATE ${{ secrets.SF_USER_NAME }}@frs.sourceforge.net:/home/frs/project/manjarolinux/${{ env.edition }}/${{ env.version }}
+              
