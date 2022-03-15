@@ -36,7 +36,5 @@ jobs:
         run: bash build.sh
         
       - name: Upload iso to sourceforge
-        run: |
-          rsync --delete -vaP --stats \
-              -e ssh /tmp/$DATE thecode-breaker@frs.sourceforge.net:/home/frs/project/xerolinux-iso-actions/kde-iso
+        run: bash upload.sh
               
