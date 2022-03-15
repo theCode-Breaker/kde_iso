@@ -43,9 +43,6 @@ jobs:
       - name: Build ISO
         run: bash build.sh
         
-      - name: Upload iso to sourceforge
-        run: bash upload.sh
-        
       - name: upload-sourceforge
         shell: bash -O extglob {0}
         env:
