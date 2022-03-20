@@ -21,14 +21,8 @@ jobs:
       - name: Set current date as environment variable
         run: echo "DATE=`date +'%Y.%m.%d'`" >>$GITHUB_ENV
         
-      - name: Create temporary build directory
-        run: mkdir -p /tmp/$DATE/airootfs/root/
-        
       - name: Update packages and install archiso
         run: pacman -Syu --noconfirm archiso mkinitcpio-archiso git squashfs-tools
-
-      - name: Copy profile to build directory
-        run: cp -r ./archiso /tmp/$DATE
         
       - name: Build ISO
         run: bash build.sh
