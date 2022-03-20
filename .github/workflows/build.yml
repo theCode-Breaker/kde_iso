@@ -22,7 +22,7 @@ jobs:
         run: echo "DATE=`date +'%Y.%m.%d'`" >>$GITHUB_ENV
         
       - name: Update packages and install archiso
-        run: pacman -Syu --noconfirm archiso mkinitcpio-archiso git squashfs-tools openssh
+        run: pacman -Syu --noconfirm archiso mkinitcpio-archiso git squashfs-tools openssh rsync
         
       - name: Build ISO
         run: |
