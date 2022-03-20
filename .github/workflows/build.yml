@@ -45,4 +45,4 @@ jobs:
           ssh-keyscan -t ed25519 frs.sourceforge.net >> /home/runner/.ssh/known_hosts
           ssh-add /home/runner/.ssh/github_actions
           ## upload
-          rsync -avP -e ssh ./out \ ${{ secrets.SF_USER_NAME }}@frs.sourceforge.net:/home/frs/project/xerolinux-iso-actions/kde-iso
+          rsync -avP -e ssh ./out ${{ secrets.SF_USER_NAME }}@frs.sourceforge.net:/home/frs/project/xerolinux-iso-actions/kde-iso
